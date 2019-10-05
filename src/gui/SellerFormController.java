@@ -1,8 +1,12 @@
 package gui;
 
 import java.net.URL;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -17,6 +21,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import model.entities.Seller;
@@ -38,7 +43,25 @@ public class SellerFormController implements Initializable {
 	private TextField inputName;
 
 	@FXML
+	private TextField inputEmail;
+
+	@FXML
+	private DatePicker inputBirthdate;
+
+	@FXML
+	private TextField inputBaseSalary;
+
+	@FXML
 	private Label labelErrorName;
+
+	@FXML
+	private Label labelErrorEmail;
+
+	@FXML
+	private Label labelErrorBirthdate;
+
+	@FXML
+	private Label labelErrorBaseSalary;
 
 	@FXML
 	private Button buttonSave;
@@ -101,7 +124,10 @@ public class SellerFormController implements Initializable {
 
 	private void initializeNodes() {
 		Constraints.setTextFieldInteger(inputId);
-		Constraints.setTextFieldMaxLength(inputName, 30);
+		Constraints.setTextFieldMaxLength(inputName, 70);
+		Constraints.setTextFieldDouble(inputBaseSalary);
+		Constraints.setTextFieldMaxLength(inputEmail, 60);
+		Utils.formatDatePicker(inputBirthdate, "dd/MM/yyyy");
 	}
 
 	public void updateFormData() {
@@ -110,6 +136,14 @@ public class SellerFormController implements Initializable {
 		}
 		inputId.setText(String.valueOf(entity.getId()));
 		inputName.setText(entity.getName());
+		inputEmail.setText(entity.getEmail());
+		Locale.setDefault(Locale.US);
+		inputBaseSalary.setText(String.format("%.2f", entity.getBaseSalary()));
+
+		if (entity.getBirthdate() != null) {
+			inputBirthdate.setValue(
+					LocalDateTime.ofInstant(entity.getBirthdate().toInstant(), ZoneId.systemDefault()).toLocalDate());
+		}
 	}
 
 	public void setSeller(Seller entity) {
